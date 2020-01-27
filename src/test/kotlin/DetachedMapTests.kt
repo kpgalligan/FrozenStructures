@@ -1,3 +1,4 @@
+import platform.posix.sleep
 import kotlin.native.concurrent.*
 import kotlin.random.Random
 import kotlin.test.*
@@ -207,6 +208,7 @@ class DetachedMapTest {
             count.addAndGet(1)
         }
         workers.forEach { it.requestTermination() }
+        sleep(2u) // Not yet 100% sure why this is needed.
 
         println("basic threads time: ${start.elapsedNow()}")
         val size = (LOOP_INSERT - LOOP_REMOVE) * WORKERS
