@@ -54,6 +54,7 @@ class DetachedMutableMap<K : Any, V : Any> : MutableMap<K, V> {
     override fun remove(key: K): V? {
         return realMap.unsafeAccess { map ->
             withWrapper(key) { wKey ->
+                // FIXME: Old key is leaked here.
                 val valueWrapper = map.remove(wKey)
                 // Can be returned since it's being pulled out of a StableRef
                 valueWrapper?.consume()
