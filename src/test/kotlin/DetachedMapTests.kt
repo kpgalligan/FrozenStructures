@@ -207,8 +207,8 @@ class DetachedMapTest {
 
             count.addAndGet(1)
         }
-        workers.forEach { it.requestTermination() }
-        sleep(2u) // Not yet 100% sure why this is needed.
+
+        waitForMultipleFutures(workers.map { it.requestTermination() }, 5000)
 
         println("basic threads time: ${start.elapsedNow()}")
         val size = (LOOP_INSERT - LOOP_REMOVE) * WORKERS
