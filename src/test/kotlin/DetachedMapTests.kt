@@ -1,3 +1,4 @@
+import platform.posix.sleep
 import kotlin.native.concurrent.*
 import kotlin.random.Random
 import kotlin.test.*
@@ -212,9 +213,7 @@ class DetachedMapTest {
 
         allFutures.forEach { it.result }
 
-        workers.forEach {
-            it.requestTermination()
-        }
+        waitForMultipleFutures(workers.map { it.requestTermination() }, 5000)
 
         println("basic threads time: ${start.elapsedNow()}")
         val size = (LOOP_INSERT - LOOP_REMOVE) * WORKERS
