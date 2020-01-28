@@ -188,30 +188,25 @@ class DetachedMapTest {
 
         val start = MonoClock.markNow()
 
-        val allFutures = workers.mapIndexed { fcount, worker ->
+        workers.forEach {
             val mycount = count.value
 
-            val future = worker.execute(
+            it.execute(
                 TransferMode.SAFE,
                 {
                     {
                         for (i in 0 until LOOP_INSERT) {
                             val key = "W:${mycount} I:$i"
-                            m.put(key, MapData("W2:${mycount} I2:$i").freeze())
+                            m.put(key, MapData("W2:${mycount} I2:$i"))
                         }
                         for (i in 0 until LOOP_REMOVE) {
                             m.remove("W:${mycount} I:${i * 10}")
                         }
                     }
-                }.freeze()
-            ) { it() }
+                }) { it() }
 
             count.addAndGet(1)
-
-            future
         }
-
-        allFutures.forEach { it.result }
 
         waitForMultipleFutures(workers.map { it.requestTermination() }, 5000)
 
